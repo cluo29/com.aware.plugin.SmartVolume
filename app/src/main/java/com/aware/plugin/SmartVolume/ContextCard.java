@@ -14,7 +14,6 @@ import com.aware.ui.Stream_UI;
 import com.aware.utils.IContextCard;
 
 public class ContextCard implements IContextCard {
-
     //Set how often your card needs to refresh if the stream is visible (in milliseconds)
     private int refresh_interval = 1 * 1000; //1 second = 1000 milliseconds
 
@@ -67,7 +66,7 @@ public class ContextCard implements IContextCard {
 
         //Initialize UI elements from the card
         //DEMO only
-        counter_txt = (TextView) card.findViewById(R.id.counter);
+        //counter_txt = (TextView) card.findViewById(R.id.counter);
 
         //Begin refresh cycle
         uiRefresher.postDelayed(uiChanger, refresh_interval);
