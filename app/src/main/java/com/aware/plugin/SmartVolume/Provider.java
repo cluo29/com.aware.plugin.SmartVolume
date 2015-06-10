@@ -31,50 +31,42 @@ public class Provider extends ContentProvider {
     public static final String[] DATABASE_TABLES = {
             "plugin_SmartVolume"
     };
-    public static final class ChuIO1_Data implements BaseColumns {
-        private ChuIO1_Data(){};
+    public static final class Smart_Volume_Data implements BaseColumns {
+        private Smart_Volume_Data(){};
 
-        public static final Uri CONTENT_URI = Uri.parse("content://"+AUTHORITY+"/plugin_ChuIO1");
-        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.aware.plugin.ChuIO1";
-        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.aware.plugin.ChuIO1";
+        public static final Uri CONTENT_URI = Uri.parse("content://"+AUTHORITY+"/plugin_SmartVolume");
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.aware.plugin.SmartVolume";
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.aware.plugin.SmartVolume";
 
         public static final String _ID = "_id";
         public static final String TIMESTAMP = "timestamp";
         public static final String DEVICE_ID = "device_id";
-        public static final String A_VALUES_0 = "double_A_values_0";   //x axis of accelerometer m/s^2
+        public static final String A_VALUES_0 = "double_A_values_0";   //x axis of accelerometer: m/s^2
         public static final String A_VALUES_1 = "double_A_values_1";    //y
         public static final String A_VALUES_2 = "double_A_values_2";    //z
-        public static final String L_VALUES_0 = "double_L_values_0";    //Light sensor
-        public static final String M_VALUES_0 = "double_M_values_0";   //x axis of magnetometer uT
-        public static final String M_VALUES_1 = "double_M_values_1";    //y
-        public static final String M_VALUES_2 = "double_M_values_2";    //z
-        public static final String GSMSTR_VALUES_0 = "double_GSMSTR_values_0";    //GSM signal strength
-        public static final String GSMNSTR_VALUES_0 = "double_GSMNSTR_values_0";    //GSM Neighbors signal strength
-        public static final String CDMASTR_VALUES_0 = "double_CDMASTR_values_0";    //CDMA RSSI
-        public static final String WIFISTR_VALUES_0 = "double_WIFISTR_values_0";    //WIFI RSSI
-        public static final String LA_VALUES_0 = "double_LA_values_0";   //x axis of linear accelerometer m/s^2
-        public static final String LA_VALUES_1 = "double_LA_values_1";    //y
-        public static final String LA_VALUES_2 = "double_LA_values_2";    //z
+        public static final String R_VALUES_0 = "double_R_values_0";   //x axis of rotation: sin(?/2)
+        public static final String R_VALUES_1 = "double_R_values_1";    //y
+        public static final String R_VALUES_2 = "double_R_values_2";    //z
+        public static final String LUX = "double_Lux";    //Light sensor
+        public static final String PROXIMITY = "double_Proximity";    //Proximity sensor
+        public static final String MICROPHONE = "double_Microphone";    //Microphone, for ambient noise
+        public static final String VOLUME = "Volume";    //Volume of phone 0-15
     }
     public static final String[] TABLES_FIELDS = {
-            ChuIO1_Data._ID + " integer primary key autoincrement," +
-                    ChuIO1_Data.TIMESTAMP + " real default 0," +
-                    ChuIO1_Data.DEVICE_ID + " text default ''," +
-                    ChuIO1_Data.A_VALUES_0 + " real default 0," +
-                    ChuIO1_Data.A_VALUES_1 + " real default 0," +
-                    ChuIO1_Data.A_VALUES_2 + " real default 0," +
-                    ChuIO1_Data.L_VALUES_0 + " real default 0," +
-                    ChuIO1_Data.M_VALUES_0 + " real default 0," +
-                    ChuIO1_Data.M_VALUES_1 + " real default 0," +
-                    ChuIO1_Data.M_VALUES_2 + " real default 0," +
-                    ChuIO1_Data.GSMSTR_VALUES_0 + " real default 0," +
-                    ChuIO1_Data.GSMNSTR_VALUES_0 + " real default 0," +
-                    ChuIO1_Data.CDMASTR_VALUES_0 + " real default 0," +
-                    ChuIO1_Data.WIFISTR_VALUES_0 + " real default 0," +
-                    ChuIO1_Data.LA_VALUES_0 + " real default 0," +
-                    ChuIO1_Data.LA_VALUES_1 + " real default 0," +
-                    ChuIO1_Data.LA_VALUES_2 + " real default 0," +
-                    "UNIQUE("+ ChuIO1_Data.TIMESTAMP+","+ ChuIO1_Data.DEVICE_ID+")"
+            Smart_Volume_Data._ID + " integer primary key autoincrement," +
+                    Smart_Volume_Data.TIMESTAMP + " real default 0," +
+                    Smart_Volume_Data.DEVICE_ID + " text default ''," +
+                    Smart_Volume_Data.A_VALUES_0 + " real default 0," +
+                    Smart_Volume_Data.A_VALUES_1 + " real default 0," +
+                    Smart_Volume_Data.A_VALUES_2 + " real default 0," +
+                    Smart_Volume_Data.R_VALUES_0 + " real default 0," +
+                    Smart_Volume_Data.R_VALUES_1 + " real default 0," +
+                    Smart_Volume_Data.R_VALUES_2 + " real default 0," +
+                    Smart_Volume_Data.LUX + " real default 0," +
+                    Smart_Volume_Data.PROXIMITY + " real default 0," +
+                    Smart_Volume_Data.MICROPHONE + " real default 0," +
+                    Smart_Volume_Data.VOLUME + " integer default 0," +
+                    "UNIQUE("+ Smart_Volume_Data.TIMESTAMP+","+ Smart_Volume_Data.DEVICE_ID+")"
     };
     private static UriMatcher URIMatcher;
     private static HashMap<String, String> databaseMap;
@@ -83,29 +75,24 @@ public class Provider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        AUTHORITY = getContext().getPackageName() + ".provider.ChuIO1";
-
+        AUTHORITY = getContext().getPackageName() + ".provider.SmartVolume";
         URIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         URIMatcher.addURI(AUTHORITY, DATABASE_TABLES[0], SMARTVOLUME);
-        URIMatcher.addURI(AUTHORITY, DATABASE_TABLES[0]+"/#", SMARTVOLUME_ID);
+        URIMatcher.addURI(AUTHORITY, DATABASE_TABLES[0] + "/#", SMARTVOLUME_ID);
         databaseMap = new HashMap<String, String>();
-        databaseMap.put(ChuIO1_Data._ID, ChuIO1_Data._ID);
-        databaseMap.put(ChuIO1_Data.TIMESTAMP, ChuIO1_Data.TIMESTAMP);
-        databaseMap.put(ChuIO1_Data.DEVICE_ID, ChuIO1_Data.DEVICE_ID);
-        databaseMap.put(ChuIO1_Data.A_VALUES_0, ChuIO1_Data.A_VALUES_0);
-        databaseMap.put(ChuIO1_Data.A_VALUES_1, ChuIO1_Data.A_VALUES_1);
-        databaseMap.put(ChuIO1_Data.A_VALUES_2, ChuIO1_Data.A_VALUES_2);
-        databaseMap.put(ChuIO1_Data.L_VALUES_0, ChuIO1_Data.L_VALUES_0);
-        databaseMap.put(ChuIO1_Data.M_VALUES_0, ChuIO1_Data.M_VALUES_0);
-        databaseMap.put(ChuIO1_Data.M_VALUES_1, ChuIO1_Data.M_VALUES_1);
-        databaseMap.put(ChuIO1_Data.M_VALUES_2, ChuIO1_Data.M_VALUES_2);
-        databaseMap.put(ChuIO1_Data.GSMSTR_VALUES_0, ChuIO1_Data.GSMSTR_VALUES_0);
-        databaseMap.put(ChuIO1_Data.GSMNSTR_VALUES_0, ChuIO1_Data.GSMNSTR_VALUES_0);
-        databaseMap.put(ChuIO1_Data.CDMASTR_VALUES_0, ChuIO1_Data.CDMASTR_VALUES_0);
-        databaseMap.put(ChuIO1_Data.WIFISTR_VALUES_0, ChuIO1_Data.WIFISTR_VALUES_0);
-        databaseMap.put(ChuIO1_Data.LA_VALUES_0, ChuIO1_Data.LA_VALUES_0);
-        databaseMap.put(ChuIO1_Data.LA_VALUES_1, ChuIO1_Data.LA_VALUES_1);
-        databaseMap.put(ChuIO1_Data.LA_VALUES_2, ChuIO1_Data.LA_VALUES_2);
+        databaseMap.put(Smart_Volume_Data._ID, Smart_Volume_Data._ID);
+        databaseMap.put(Smart_Volume_Data.TIMESTAMP, Smart_Volume_Data.TIMESTAMP);
+        databaseMap.put(Smart_Volume_Data.DEVICE_ID, Smart_Volume_Data.DEVICE_ID);
+        databaseMap.put(Smart_Volume_Data.A_VALUES_0, Smart_Volume_Data.A_VALUES_0);
+        databaseMap.put(Smart_Volume_Data.A_VALUES_1, Smart_Volume_Data.A_VALUES_1);
+        databaseMap.put(Smart_Volume_Data.A_VALUES_2, Smart_Volume_Data.A_VALUES_2);
+        databaseMap.put(Smart_Volume_Data.R_VALUES_0, Smart_Volume_Data.R_VALUES_0);
+        databaseMap.put(Smart_Volume_Data.R_VALUES_1, Smart_Volume_Data.R_VALUES_1);
+        databaseMap.put(Smart_Volume_Data.R_VALUES_2, Smart_Volume_Data.R_VALUES_2);
+        databaseMap.put(Smart_Volume_Data.LUX, Smart_Volume_Data.LUX);
+        databaseMap.put(Smart_Volume_Data.PROXIMITY, Smart_Volume_Data.PROXIMITY);
+        databaseMap.put(Smart_Volume_Data.MICROPHONE, Smart_Volume_Data.MICROPHONE);
+        databaseMap.put(Smart_Volume_Data.VOLUME, Smart_Volume_Data.VOLUME);
         return true;
     }
 
@@ -146,9 +133,9 @@ public class Provider extends ContentProvider {
     public String getType(Uri uri) {
         switch (URIMatcher.match(uri)) {
             case SMARTVOLUME:
-                return ChuIO1_Data.CONTENT_TYPE;
+                return Smart_Volume_Data.CONTENT_TYPE;
             case SMARTVOLUME_ID:
-                return ChuIO1_Data.CONTENT_ITEM_TYPE;
+                return Smart_Volume_Data.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -165,11 +152,11 @@ public class Provider extends ContentProvider {
 
         switch (URIMatcher.match(uri)) {
             case SMARTVOLUME:
-                long weather_id = database.insert(DATABASE_TABLES[0], ChuIO1_Data.DEVICE_ID, values);
+                long weather_id = database.insert(DATABASE_TABLES[0], Smart_Volume_Data.DEVICE_ID, values);
 
                 if (weather_id > 0) {
                     Uri new_uri = ContentUris.withAppendedId(
-                            ChuIO1_Data.CONTENT_URI,
+                            Smart_Volume_Data.CONTENT_URI,
                             weather_id);
                     getContext().getContentResolver().notifyChange(new_uri,
                             null);
